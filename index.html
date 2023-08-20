@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A free to play website for everyones favorite clasic game... Pong! Use the arrow keys to move around a paddle and stop the ball from hitting the edge."
+    />
+    <meta name="keywords" content="game, pong, free, no ads, unblock" />
+    <title>Free Pong Game || No Ads</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter&display=swap"
+      rel="stylesheet"
+    />
+    <script
+      src="https://kit.fontawesome.com/604024801b.js"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <header>
+      <h1>Pong because you're stuck in school and extremely bored</h1>
+    </header>
+    <div class="game-group">
+      <button id="start" title="play" onclick="startGame()">
+        <i class="fa-solid fa-play"></i>
+      </button>
+      <div id="gameText"></div>
+      <div class="scoreboard">
+        <span id="player-score"></span>
+        <span id="enemy-score"></span>
+      </div>
+      <div class="scorer" id="enemy-light"></div>
+      <canvas id="canvas" width="480" height="320"></canvas>
+      <div class="scorer" id="player-light"></div>
+    </div>
+    <div class="game-controls">
+      <span id="score">0</span>
+      <div class="input-group">
+        <label class="enemyDiffLabel" for="enemyDiff">Enemy Difficulty:</label>
+        <input
+          type="range"
+          name="enemyDiff"
+          id="enemyDiff"
+          max="1"
+          min=".6"
+          step=".1"
+        />
+        <div id="enemyDiffReader"></div>
+      </div>
+    </div>
+    <script src="playerMovement.js"></script>
+  </body>
+</html>

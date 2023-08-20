@@ -1,0 +1,176 @@
+body {
+    margin: 0;
+    padding: 0;
+    background: lightgray;
+    font-family: 'Inter', sans-serif;
+    font-size: 62.5%;
+}
+
+/* Header */
+
+header {
+    font-size: 1.5rem;
+    margin: 2rem auto;
+    text-align: center;
+}
+
+/* Game */
+
+.game-group {
+    margin: 0 auto;
+    width: -moz-fit-content;
+    width: fit-content;
+    display: grid;
+    justify-content: center;
+}
+
+#canvas {
+    background: #000;
+    display: block;
+    margin: 0;
+}
+
+.scorer {
+    width: 100%;
+    height: 10px;
+    background: limegreen;
+}
+
+#gameText {
+    font-size: 3rem;
+    font-weight: bold;
+    position: absolute;
+    left: 50%;
+    bottom: 45%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: limegreen;
+    display: none;
+}
+
+/* Game controls */
+
+.game-controls {
+    margin: 2rem auto;
+    display: flex;
+    justify-content: space-around;
+}
+
+#score {
+    background: #000;
+    color: #fff;
+    width: 5rem;
+    height: 5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    border-radius: 20px;
+    font-size: 2rem;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    background: #000;
+    border-radius: 20px;
+}
+
+.enemyDiffLabel {
+    font-size: 1rem;
+    padding: 1rem;
+    height: -moz-fit-content;
+    height: fit-content;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #fff;
+}
+
+#enemyDiffReader {
+    height: 2rem;
+    width: 3rem;
+    margin: 0 1rem;
+    background: #fff;
+    border-radius: 10px;
+    color: #000;
+    font-size: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+input[type="range"]{
+    -webkit-appearance: none;
+    appearance:none;
+    border-radius: 10px;
+}
+input[type="range"]::-moz-focus-outer {
+      border: 0;
+}
+
+input[type="range"]:hover {
+    outline:none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 30px;
+    margin-top: -10px;
+    background: limegreen;
+    cursor: pointer;
+    border-radius: 5px;
+    outline: none;
+}
+
+input[type='range']::-webkit-slider-runnable-track {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 10px;
+    background: #fff;
+    outline: none;
+    border-radius: 30px;
+}
+
+/* Score board */
+
+.scoreboard {
+    height: 40px;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+#player-score, #enemy-score {
+    height: 100%;
+    aspect-ratio: 1;
+    background: #000;
+    border-radius: 5px;
+    color: #fff;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Buttons */
+
+#start {
+    width: 100px;
+    aspect-ratio: 1;
+    outline: none;
+    border: 1px solid #000;
+    border-radius: 20px;
+    font-size: 3rem;
+    background: limegreen;
+    position: absolute;
+    left: 50%;
+    bottom: 50%;
+    transform: translate(-50%, -50%);
+}
+
