@@ -1,20 +1,17 @@
 const canvas = document.getElementById("canvas");
 const ctx = canvas.getContext("2d");
 const scoreReader = document.getElementById('score')
-const enemyScorer = document.getElementById('enemy-light')
-const playerScorer = document.getElementById('player-light')
-const playerPoints = document.getElementById('player-score')
-const enemyPoints = document.getElementById('enemy-score')
 const gameText = document.getElementById('gameText')
+const highscoreBlock = document.getElementById('highscore');
+
+const ballSpeed = 3;
 
 let points = 0;
-let enemyScore = 0;
-let playerScore = 0;
-
+let highscore = 0;
 let x = canvas.width/2;
 let y = canvas.height-30;
-let dx = 2;
-let dy = -2;
+let dx = ballSpeed;
+let dy = -ballSpeed;
 
 const ballRadius = 10;
 
@@ -23,12 +20,8 @@ const paddleWidth = 75;
 
 let paddleX = (canvas.width-paddleWidth)/2;
 
-let enemyX = (canvas.width-paddleWidth)/2;
-
 let rightPressed = false;
 let leftPressed = false;
-
-let enemyDiff = .1;
 
 
 // Draw functions
@@ -49,12 +42,28 @@ function drawPaddle() {
     ctx.closePath();
 }
 
-function drawEnemy() {
-    ctx.beginPath();
-    ctx.rect(enemyX, 0, paddleWidth, paddleHeight);
-    ctx.fillStyle = '#fff';
-    ctx.fill();
-    ctx.closePath();
+// Sound system setup
+
+let audioCtx = null;
+function playNote(freq, dur) {
+    if(audioCtx==null){
+        audioCtx=new(
+          AudioContext ||
+          webkitAudioContext ||
+          window.webkitAudioContext
+        )();
+      }
+      const osc = audioCtx.createOscillator();
+      osc.frequency.value = freq;
+      osc.start();
+      osc.stop(audioCtx.currentTime+dur);
+      const node = audioCtx.createGain();
+      node.gain.value = 0.5;
+      node.gain.linearRampToValueAtTime(
+        0, audioCtx.currentTime+dur
+      );
+      osc.connect(node);
+      node.connect(audioCtx.destination);
 }
 
 // Movement functions
@@ -64,24 +73,22 @@ function ballMovement() {
     if(x + dx > canvas.width-ballRadius || x + dx < ballRadius) {
         dx = -dx;
     }
-    if (y + dy < ballRadius + paddleHeight) {
-        if (x > enemyX && x < enemyX + paddleWidth) {
-            dy = -dy;
-            points++
-            scoreReader.innerHTML = points
-        }
-        else if(y + dy < ballRadius){
-            resetGame('player')
-        }
+    if (y + dy < ballRadius) {
+        dy = -dy;
     }
     else if (y + dy > canvas.height - ballRadius - paddleHeight) {
         if (x > paddleX && x < paddleX + paddleWidth) {
             dy = -dy;
             points++;
+            playNote(1000, .1)
+            if(points > highscore) {
+                updateHighScore();
+            }
             scoreReader.innerHTML = points
         }
         else if(y + dy > canvas.height - ballRadius) {
-            resetGame('enemy')
+            endGame();
+            playNote(500, .5)
         }
     }  
     
@@ -90,12 +97,12 @@ function ballMovement() {
     
     if(points % 10 === 0 && points !== 0) {
         if(currentPoint !== points) {
-            if(dx < 0) dx = dx - .1
-            if(dx > 0) dx = dx + .1
-            if(dy < 0) dy = dy - .1
-            if(dy > 0) dy = dy + .1
-            console.log('speedUp')
+            if(dx < 0) dx = dx - .2
+            if(dx > 0) dx = dx + .2
+            if(dy < 0) dy = dy - .2
+            if(dy > 0) dy = dy + .2
             gameText.innerHTML = 'SPEED UP!'
+            playNote(1500, .25)
             gameText.style.display = 'block'
             setTimeout(() => {
                 gameText.style.display = 'none'
@@ -120,27 +127,6 @@ function paddleMovement() {
     }
 }
 
-function enemyMovement() {
-    if(enemyLogic()) {
-        if(enemyX < x - (paddleWidth / 2)) {
-            enemyX += 7;
-            if(enemyX + paddleWidth > canvas.width){
-                enemyX = canvas.width - paddleWidth;
-            }
-        }
-        if(enemyX > x - (paddleWidth / 2)) {
-            enemyX -= 7;
-            if(enemyX < 0) {
-                enemyX = 0;
-            }
-        }
-    }
-}
-
-function enemyLogic() {
-    if(Math.random() * enemyDiff > .5) return true;
-    else return false;
-}
 // Other functions
 
 function draw() {
@@ -149,86 +135,39 @@ function draw() {
     ballMovement();
     drawPaddle();
     paddleMovement();
-    drawEnemy();
-    enemyMovement();
-    scoreBoard();
 }
 
+function updateHighScore() {
+    highscore = points;
+    highscoreBlock.innerHTML = highscore;
+}
 
-const startButton = document.getElementById('start')
+const startButton = document.getElementById('start');
 let interval;
+
 function startGame() {
     interval = setInterval(draw, 10);
-    startButton.style.display = 'none'
-    gameText.style.display = 'none'
-    clearInterval(sliderInterval);
-    dx = 0;
-    dy = 0;
-    setTimeout(() => {
-        dx = 2;
-        dy = -2;
-    }, 2000);
+    resetGame();
+    startButton.style.display = 'none';
 }
 
 function endGame() {
+    startButton.style.display = 'block';
+    paddleX = canvas.width / 2 - paddleWidth / 2;
     clearInterval(interval);
-    sliderInterval = setInterval(slider, 10)
-    interval;
-    startButton.style.display = 'block'
-    gameText.innerHTML = `${winner} WON!`
-    gameText.style.display = 'block'
-    playerScore = 0;
-    enemyScore = 0;
 }
 
-function resetGame(winner) {
-    x = canvas.width / 2
-    y = canvas.height / 2
-    dx = 0; dy = 0;
+function resetGame() {
+    dx = 0;
+    dy = 0;
+    x = canvas.width / 2;
+    y = canvas.height / 2;
     points = 0;
-    scoreReader.innerHTML = 0;
-    paddleX = (canvas.width-paddleWidth)/2;
-    enemyX = (canvas.width-paddleWidth)/2;
-    if(winner === 'player') {
-        playerScore++;
-        playerPoints.style.color = 'limegreen';
-        enemyScorer.style.background = 'red'
-        setTimeout(() => {
-            enemyScorer.style.background = 'limegreen'
-            playerPoints.style.color = '#fff';
-        }, 250);
-    }
-    else if(winner === 'enemy') {
-        enemyScore++;
-        enemyPoints.style.color = 'red';
-        playerScorer.style.background = 'red';
-        setTimeout(() => {
-            playerScorer.style.background = 'limegreen'
-            enemyPoints.style.color = '#fff'
-        }, 250);
-    }
-    
+    scoreReader.innerHTML = points;
     setTimeout(() => {
-        if(winner === 'player') {
-            dy = 2;
-            dx = 2;
-        }
-        else if(winner === 'enemy') {
-            dy = -2;
-            dx = -2;
-        }
-    }, 3000);
-}
-
-const pointsToWin = 10;
-function scoreBoard() {
-    playerPoints.innerHTML = playerScore;
-    enemyPoints.innerHTML = enemyScore;
-    if(playerScore >= pointsToWin) winner = 'YOU'
-    if(enemyScore >= pointsToWin) winner = 'AI'
-    if(playerScore >= pointsToWin || enemyScore >= pointsToWin) {
-        endGame();
-    }
+        dy = ballSpeed;
+        dx = ballSpeed;
+    }, 2000)
 }
 
 // Keyboard input manager
@@ -249,30 +188,5 @@ function keyUpHandler(e) {
         rightPressed = false;
     } else if (e.key === "Left" || e.key === "ArrowLeft") {
         leftPressed = false;
-    }
-}
-
-// Game UI
-
-const enemyDiffSlider = document.getElementById('enemyDiff')
-const enemyDiffReader = document.getElementById('enemyDiffReader')
-enemyDiffSlider.value = .6;
-let sliderInterval = setInterval(slider, 10);
-function slider() {
-    enemyDiff = enemyDiffSlider.value
-    if(enemyDiff == .6) {
-        enemyDiffReader.innerHTML = 'Baby'
-    }
-    else if(enemyDiff == .7) {
-        enemyDiffReader.innerHTML = 'Easy';
-    }
-    else if(enemyDiff == .8) {
-        enemyDiffReader.innerHTML = 'Mid';
-    }
-    else if(enemyDiff == .9) {
-        enemyDiffReader.innerHTML = 'Hard';
-    }
-    else if(enemyDiff == 1) {
-        enemyDiffReader.innerHTML = 'no';
     }
 }
