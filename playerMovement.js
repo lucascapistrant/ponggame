@@ -4,7 +4,7 @@ const scoreReader = document.getElementById('score')
 const gameText = document.getElementById('gameText')
 const highscoreBlock = document.getElementById('highscore');
 
-const ballSpeed = 3;
+const ballSpeed = 2;
 
 let points = 0;
 let highscore = 0;
